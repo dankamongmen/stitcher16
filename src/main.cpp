@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
     }
     std::cout << "Read " << *argv << " (" << img.size() << ")" << std::endl;
     std::cout << " depth: " << img.depth() << " type: " << img.type() << std::endl;
+    imgs.push_back(img);
   }
   cv::Mat pano;
   cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create(mode);
@@ -36,7 +37,7 @@ int main(int argc, char** argv) {
     std::cerr << "Can't stitch images, error code = " << int(status) << std::endl;
     return EXIT_FAILURE;
   }
-  if(cv::imwrite(result_name, pano)){
+  if(!cv::imwrite(result_name, pano)){
     std::cerr << "Couldn't write output to " << result_name << std::endl;
     return EXIT_FAILURE;
   }
