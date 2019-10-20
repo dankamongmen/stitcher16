@@ -23,15 +23,19 @@ int main(int argc, char** argv) {
       std::cerr << "Couldn't read image at " << *arg << std::endl;
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
+    std::cout << "Read " << *argv << " (" << img.size() << ")" << std::endl;
   }
   cv::Mat pano;
   cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create(mode);
   cv::Stitcher::Status status = stitcher->stitch(imgs, pano);
   if(status != cv::Stitcher::OK){
-      std::cerr << "Can't stitch images, error code = " << int(status) << std::endl;
-      return EXIT_FAILURE;
+    std::cerr << "Can't stitch images, error code = " << int(status) << std::endl;
+    return EXIT_FAILURE;
   }
-  cv::imwrite(result_name, pano);
-  std::cout << "stitching completed successfully\n" << result_name << " saved!";
+  if(cv::imwrite(result_name, pano)){
+    std::cerr << "Couldn't write output to " << result_name << std::endl;
+    return EXIT_FAILURE;
+  }
+  std::cout << "saved result to " << result_name << std::endl;
   return EXIT_SUCCESS;
 }
