@@ -1,4 +1,5 @@
 #include <iostream>
+#include <tiffio.h>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/stitching.hpp>
 
@@ -16,15 +17,17 @@ int main(int argc, char** argv) {
   if(argc < 3){
     usage(argv[0], std::cerr, EXIT_FAILURE);
   }
+  std::cout << "Using OpenCV " << CV_VERSION << std::endl;
+  std::cout << "TIFF " << TIFFLIB_VERSION << std::endl;
   const std::string result_name = argv[1];
   for(auto arg = argv + 2 ; *arg ; ++arg){
-    cv::Mat img = cv::imread(cv::samples::findFile(*arg));
+    cv::Mat img = cv::imread(cv::samples::findFile(*arg, cv::IMREAD_UNCHANGED));
     if(img.empty()){
       std::cerr << "Couldn't read image at " << *arg << std::endl;
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
     std::cout << "Read " << *argv << " (" << img.size() << ")" << std::endl;
-    std::cout << "channels: " << img.channels() << std::endl;
+    std::cout << " depth: " << img.depth() << " type: " << img.type() << std::endl;
   }
   cv::Mat pano;
   cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create(mode);

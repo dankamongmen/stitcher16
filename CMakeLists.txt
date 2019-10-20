@@ -4,11 +4,13 @@ project(Stitcher16 VERSION 0.0.1
     LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(PkgConfig REQUIRED)
 find_package(OpenCV 4.1.2 REQUIRED COMPONENTS core imgcodecs stitching)
+pkg_check_modules(TIFF REQUIRED libtiff-4)
 
 file(GLOB BINSRCS CONFIGURE_DEPENDS src/*.cpp)
 add_executable(stitcher16 ${BINSRCS})
-target_include_directories(stitcher16 PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_include_directories(stitcher16 PRIVATE ${OpenCV_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS})
 target_link_libraries(stitcher16 ${OpenCV_LIBS})
 target_compile_options(stitcher16 PRIVATE
     -Wall -Wextra
