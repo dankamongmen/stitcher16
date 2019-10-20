@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
     std::cout << "Read " << *argv << " (" << img.size() << ")" << std::endl;
+    std::cout << "channels: " << img.channels() << std::endl;
   }
   cv::Mat pano;
   cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create(mode);
