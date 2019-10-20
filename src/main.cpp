@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
       std::cerr << "Couldn't read image at " << *arg << std::endl;
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
-    std::cout << "Read " << *argv << " (" << img.size() << ")" << std::endl;
+    std::cout << "Read " << *arg << " (" << img.size() << ")" << std::endl;
     std::cout << " depth: " << img.depth() << " type: " << img.type() << std::endl;
     imgs.push_back(img);
   }
