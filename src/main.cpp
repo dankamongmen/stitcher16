@@ -4,8 +4,8 @@
 
 // Adapted from https://docs.opencv.org/master/d8/d19/tutorial_stitcher.html
 
-void usage(const char* name, int ret) {
-  std::cout << "usage: " << name << "output input1 [ input2...]" << std::endl;
+void usage(const char* name, std::ostream& os, int ret) {
+  os << "usage: " << name << " output input1 [ input2...]" << std::endl;
   exit(ret);
 }
 
@@ -14,11 +14,15 @@ int main(int argc, char** argv) {
   std::vector<cv::Mat> imgs;
 
   if(argc < 3){
-    usage(argv[0], EXIT_FAILURE);
+    usage(argv[0], std::cerr, EXIT_FAILURE);
   }
   const std::string result_name = argv[1];
-  for(auto arg = argv + 2 ; arg ; ++arg){
+  for(auto arg = argv + 2 ; *arg ; ++arg){
     cv::Mat img = cv::imread(cv::samples::findFile(*arg));
+    if(img.empty()){
+      std::cerr << "Couldn't read image at " << *arg << std::endl;
+      usage(argv[0], std::cerr, EXIT_FAILURE);
+    }
   }
   cv::Mat pano;
   cv::Ptr<cv::Stitcher> stitcher = cv::Stitcher::create(mode);
