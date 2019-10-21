@@ -447,7 +447,7 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < num_images; ++i)
     {
-        full_img = imread(samples::findFile(img_names[i]));
+        full_img = imread(samples::findFile(img_names[i]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
         full_img_sizes[i] = full_img.size();
 
         if (full_img.empty())
@@ -455,6 +455,10 @@ int main(int argc, char* argv[])
             LOGLN("Can't open image " << img_names[i]);
             return -1;
         }
+        std::cout << "Image " << img_names[i] << " (" << full_img.size()
+                  << ")\n depth: " << full_img.depth() << " chan: "
+                  << full_img.channels() << " type: " << full_img.type()
+                  << std::endl;
         if (work_megapix < 0)
         {
             img = full_img;
@@ -925,10 +929,15 @@ int main(int argc, char* argv[])
         blender->blend(result, result_mask);
 
         LOGLN("Compositing, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
+        std::cout << "\nOutput " << result.size() << std::endl;
+        std::cout << " depth: " << result.depth() << " type: " << result.type() << std::endl;
 
-        imwrite(result_name, result);
+        if(!imwrite(result_name, result)){
+            std::cerr << "Couldn't write output to " << result_name << std::endl;
+            return EXIT_FAILURE;
+        }
     }
 
-    LOGLN("Finished, total time: " << ((getTickCount() - app_start_time) / getTickFrequency()) << " sec");
+    LOGLN("Finished " << result_name << ", total time: " << ((getTickCount() - app_start_time) / getTickFrequency()) << " sec");
     return 0;
 }
