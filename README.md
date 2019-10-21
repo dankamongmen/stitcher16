@@ -10,6 +10,22 @@ Developed by Nick Black (dankamongmen@gmail.com)
     for matching only yielded a positive result. Using affine for estimation
     alone yielded a null result. IMHO, the homographic output was slightly
     better (less banding), at least for 8-bit output.
+* Must pass cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR to imread() to load
+    images as 16-bit ones.
+```
+Image /home/dank/pathware/stitcher16/DSC068/DSC068_01.tiff ([1280 x 920])
+ depth: 2 chan: 3 type: 18
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.1.2-dev) /home/dank/src/opencv_contrib/modules/xfeatures2d/src/surf.cpp:894: error: (-215:Assertion failed) !_img.empty() && CV_MAT_DEPTH(imgtype) == CV_8U && (imgcn == 1 || imgcn == 3 || imgcn == 4) in function 'detectAndCompute'
+```
+  * surf: broken for 16-bit
+  * orb: null result
+  * sift: broken for 16-bit
+  * akaze: found insufficient features to merge a full row, though it could
+      handle simpler tasks (DSC008, DSC068, etc.). detected far fewer
+      features. detection count was not dependent on bit depth (got same
+      unusable result with 8-bit loading).
+
 
 ## notes (simple)
 
