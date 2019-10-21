@@ -8,10 +8,18 @@ find_package(PkgConfig REQUIRED)
 find_package(OpenCV 4.1.2 REQUIRED COMPONENTS core imgcodecs stitching)
 pkg_check_modules(TIFF REQUIRED libtiff-4)
 
-file(GLOB BINSRCS CONFIGURE_DEPENDS src/*.cpp)
-add_executable(stitcher16 ${BINSRCS})
+file(GLOB SBINSRCS CONFIGURE_DEPENDS src/simple.cpp)
+add_executable(stitcher16 ${SBINSRCS})
 target_include_directories(stitcher16 PRIVATE ${OpenCV_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS})
 target_link_libraries(stitcher16 ${OpenCV_LIBS})
 target_compile_options(stitcher16 PRIVATE
+    -Wall -Wextra
+)
+
+file(GLOB DBINSRCS CONFIGURE_DEPENDS src/detailed.cpp)
+add_executable(detailed16 ${DBINSRCS})
+target_include_directories(detailed16 PRIVATE ${OpenCV_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS})
+target_link_libraries(detailed16 ${OpenCV_LIBS})
+target_compile_options(detailed16 PRIVATE
     -Wall -Wextra
 )

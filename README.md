@@ -5,7 +5,13 @@ on behalf of [pathware](https://www.pathware.com/).
 
 Developed by Nick Black (dankamongmen@gmail.com)
 
-## code flow
+## notes (detailed)
+* Using affine for estimator and matcher yielded a null result. Using affine
+    for matching only yielded a positive result. Using affine for estimation
+    alone yielded a null result. IMHO, the homographic output was slightly
+    better (less banding), at least for 8-bit output.
+
+## notes (simple)
 
 Images as read have depth()==2 (CV_U16), as expected.
 Panorama object has depth()==0 (CV_U8), undesirable.
