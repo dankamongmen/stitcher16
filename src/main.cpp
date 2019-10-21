@@ -37,6 +37,8 @@ int main(int argc, char** argv) {
     std::cerr << "Can't stitch images, error code = " << int(status) << std::endl;
     return EXIT_FAILURE;
   }
+  std::cout << "\nOutput " << pano.size() << std::endl;
+  std::cout << " depth: " << pano.depth() << " type: " << pano.type() << std::endl;
   if(!cv::imwrite(result_name, pano)){
     std::cerr << "Couldn't write output to " << result_name << std::endl;
     return EXIT_FAILURE;
