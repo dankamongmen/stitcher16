@@ -38,6 +38,12 @@ terminate called after throwing an instance of 'cv::Exception'
 terminate called after throwing an instance of 'cv::Exception'
   what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/stitching/src/exposure_compensate.cpp:459: error: (-215:Assertion failed) _image.type() == CV_8UC3 in function 'apply'
 ```
+  * Naive removal of assert() led to washed-out, unusable image
+* warp type: spherical is default.
+  * plane generates garbage.
+  * affine generates garbage. but retest with --matcher affine!
+
+* turning off compensation (--expos_comp no) generates garbage
 
 ## notes (simple)
 
