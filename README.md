@@ -43,7 +43,7 @@ terminate called after throwing an instance of 'cv::Exception'
   * plane generates garbage.
   * affine generates garbage. but retest with --matcher affine!
 
-* turning off compensation (--expos_comp no) generates garbage
+* turning off compensation (--expos_comp no) seems to have no problem in 8bit mode
 
 ## notes (simple)
 

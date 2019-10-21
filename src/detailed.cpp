@@ -447,7 +447,7 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < num_images; ++i)
     {
-        full_img = imread(samples::findFile(img_names[i]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+        full_img = imread(samples::findFile(img_names[i])/*, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR*/);
         full_img_sizes[i] = full_img.size();
 
         if (full_img.empty())
@@ -900,6 +900,9 @@ int main(int argc, char* argv[])
             timelapser = Timelapser::createDefault(timelapse_type);
             timelapser->initialize(corners, sizes);
         }
+
+        std::cout << "\nOutput " << img_warped_s.size() << std::endl;
+        std::cout << " depth: " << img_warped_s.depth() << " type: " << img_warped_s.type() << std::endl;
 
         // Blend the current image
         if (timelapse)
