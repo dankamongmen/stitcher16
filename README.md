@@ -33,7 +33,11 @@ terminate called after throwing an instance of 'cv::Exception'
       handle simpler tasks (DSC008, DSC068, etc.). detected far fewer
       features. detection count was not dependent on bit depth (got same
       unusable result with 8-bit loading).
-
+* Second imread() for compositing also needs cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR
+```
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/stitching/src/exposure_compensate.cpp:459: error: (-215:Assertion failed) _image.type() == CV_8UC3 in function 'apply'
+```
 
 ## notes (simple)
 
