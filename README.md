@@ -19,8 +19,16 @@ terminate called after throwing an instance of 'cv::Exception'
   what():  OpenCV(4.1.2-dev) /home/dank/src/opencv_contrib/modules/xfeatures2d/src/surf.cpp:894: error: (-215:Assertion failed) !_img.empty() && CV_MAT_DEPTH(imgtype) == CV_8U && (imgcn == 1 || imgcn == 3 || imgcn == 4) in function 'detectAndCompute'
 ```
   * surf: broken for 16-bit
+    * removing assert yields:
+```
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/imgproc/src/sumpixels.cpp:580: error: (-210:Unsupported format or combination of formats)  in function 'integral'
+```
   * orb: null result
   * sift: broken for 16-bit
+    * removing assert yielded many more features detected (thousands rather than
+        hundreds), longer running time, positive result, but banding similar to
+        8-bit affine match result whether using affine or homography
   * akaze: found insufficient features to merge a full row, though it could
       handle simpler tasks (DSC008, DSC068, etc.). detected far fewer
       features. detection count was not dependent on bit depth (got same
