@@ -806,7 +806,7 @@ int main(int argc, char* argv[])
         LOGLN("Compositing image #" << indices[img_idx]+1);
 
         // Read image and resize it if necessary
-        full_img = imread(samples::findFile(img_names[img_idx]));
+        full_img = imread(samples::findFile(img_names[img_idx]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
         if (!is_compose_scale_set)
         {
             if (compose_megapix > 0)
