@@ -21,13 +21,14 @@ int main(int argc, char** argv) {
   std::cout << "TIFF " << TIFFLIB_VERSION << std::endl;
   const std::string result_name = argv[1];
   for(auto arg = argv + 2 ; *arg ; ++arg){
-    cv::Mat img = cv::imread(cv::samples::findFile(*arg), cv::IMREAD_UNCHANGED);
+    cv::Mat img = cv::imread(cv::samples::findFile(*arg), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
     if(img.empty()){
       std::cerr << "Couldn't read image at " << *arg << std::endl;
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
     std::cout << "Read " << *arg << " (" << img.size() << ")" << std::endl;
-    std::cout << " depth: " << img.depth() << " type: " << img.type() << std::endl;
+    std::cout << " chans: " << img.channels() << " depth: " << img.depth()
+              << " type: " << img.type() << std::endl;
     imgs.push_back(img);
   }
   cv::Mat pano;
