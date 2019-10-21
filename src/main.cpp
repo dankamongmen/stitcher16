@@ -27,7 +27,8 @@ int main(int argc, char** argv) {
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
     std::cout << "Read " << *arg << " (" << img.size() << ")" << std::endl;
-    std::cout << " depth: " << img.depth() << " type: " << img.type() << std::endl;
+    std::cout << " chans: " << img.channels() << " depth: " << img.depth()
+              << " type: " << img.type() << std::endl;
     imgs.push_back(img);
   }
   cv::Mat pano;
