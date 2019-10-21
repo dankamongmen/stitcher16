@@ -14,6 +14,7 @@ int main(int argc, char** argv) {
   cv::Stitcher::Mode mode = cv::Stitcher::SCANS;
   std::vector<cv::Mat> imgs;
 
+  cv::detail::stitchingLogLevel() = 0;
   if(argc < 3){
     usage(argv[0], std::cerr, EXIT_FAILURE);
   }
