@@ -902,14 +902,15 @@ int main(int argc, char* argv[])
            */
     }
 
-    Mat result, result_mask;
+    Mat result, result_mask, mat16;
     blender->blend(result, result_mask);
 
     LOGLN("Compositing, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
-    print_mat(result, result_name, std::cout);
+    result.convertTo(mat16, CV_16UC3, 255.0);
+    print_mat(result, "15-bit crap", std::cout);
     print_mat(result_mask, "MASK", std::cout);
-
-    if(!imwrite(result_name, result)){
+    print_mat(mat16, result_name, std::cout);
+    if(!imwrite(result_name, mat16)){
         std::cerr << "Couldn't write output to " << result_name << std::endl;
         return EXIT_FAILURE;
     }
