@@ -46,12 +46,39 @@ terminate called after throwing an instance of 'cv::Exception'
 * turning off compensation (--expos_comp no) with affine generates a slightly
   different image in 8-bit mode, a bit blurrier than the compensated
   homographic. uncompensated homographic generates a washed-out image.
-* ConvertTo(32S) instead of (16S):
 ```
 terminate called after throwing an instance of 'cv::Exception'
   what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/stitching/src/blenders.cpp:362: error: (-215:Assertion failed) img.type() == CV_16SC3 || img.type() == CV_8UC3
 ```
 * removed assert
+```
+    Output [1346 x 920]
+ depth: 4 type: 20
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/imgproc/src/pyramids.cpp:1264: error: (-210:Unsupported format or combination of formats)  in function 'pyrDown'
+```
+* removed assert, added support for CV_U32S in pyrUp and pyrDown
+```
+Output [1279 x 919]
+ depth: 4 type: 20
+roi.x: 0 roi.width: 1408 m.cols: 0 roi.y: 320 rou.height: 1408 m.rows: 0
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/core/src/umatrix.cpp:549: error: (-215:Assertion failed) 0 <= roi.x && 0 <= roi.width && roi.x + roi.width <= m.cols && 0 <= roi.y && 0 <= roi.height && roi.y + roi.height <= m.rows in function 'UMat'
+via #9  0x00007ffff7e763d6 in cv::detail::MultiBandBlender::feed(cv::_InputArray const&, cv::_InputArray const&, cv::Point_<int>) () at /usr/local/lib/libopencv_stitching.so.4.1
+```
+* blend no:
+```
+what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/stitching/src/blenders.cpp:103: error: (-215:Assertion failed) img.type() == CV_16SC3 in function 'feed'
+```
+* Add CV_32SC3
+```
+Output [1279 x 919]
+ depth: 4 type: 20
+==15365== Invalid read of size 1
+==15365==    at 0x4870AD2: cv::detail::Blender::feed(cv::_InputArray const&, cv::_InputArray const&, cv::Point_<int>) (in /usr/local/lib/libopencv_stitching.so.4.1.2)
+```
+* Changed feed() casts to use int from short
+
 
 ## notes (simple)
 

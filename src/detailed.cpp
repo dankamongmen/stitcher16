@@ -860,9 +860,6 @@ int main(int argc, char* argv[])
   /*imshow("pre-conversion", img_warped);
   print_mat(img_warped, "pre-conversion", std::cout);*/
         img_warped.convertTo(img_warped_s, CV_16S);
-  imshow("post-conversion", img_warped_s);
-  print_mat(img_warped_s, "post-conversion", std::cout);
-  waitKey(0);
         img_warped.release();
         img.release();
         mask.release();
@@ -898,14 +895,23 @@ int main(int argc, char* argv[])
 
         // Blend the current image
         blender->feed(img_warped_s, mask_warped, corners[img_idx]);
+
+        static bool crap = false;
+           if(crap == false){
+            crap = true;
+            Mat result, result_mask;
+            blender->blend(result, result_mask);
+            imshow("post-convertsion", result);
+            waitKey(0);
+           }
     }
 
     Mat result, result_mask;
     blender->blend(result, result_mask);
 
     LOGLN("Compositing, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
-    std::cout << "\nOutput " << result.size() << std::endl;
-    std::cout << " depth: " << result.depth() << " type: " << result.type() << std::endl;
+    print_mat(result, result_name, std::cout);
+    print_mat(result_mask, "MASK", std::cout);
 
     if(!imwrite(result_name, result)){
         std::cerr << "Couldn't write output to " << result_name << std::endl;
