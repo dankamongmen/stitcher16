@@ -85,7 +85,7 @@ Defaults:
     alone yielded a null result. IMHO, the all-homography output was slightly
     better (less banding), at least for 8-bit output.
 * Using blend=no yielded an unacceptable result. Blend=feather was similarly
-    unaccpetable.
+    unacceptable.
 * Must pass cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR to imread() to load
     images as 16-bit ones.
 ```
