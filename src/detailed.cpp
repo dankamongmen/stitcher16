@@ -1,3 +1,4 @@
+#include <filesystem>
 // Adapted from opencv/samples/cpp/stitching_detailed.cpp 4.1.2
 #include "pathware.h"
 #include <iostream>
@@ -437,10 +438,7 @@ int main(int argc, char* argv[])
             LOGLN("Can't open image " << img_names[i]);
             return -1;
         }
-        std::cout << "Image " << img_names[i] << " (" << full_img.size()
-                  << ")\n depth: " << full_img.depth() << " chan: "
-                  << full_img.channels() << " type: " << full_img.type()
-                  << std::endl;
+        print_mat(full_img, img_names[i], std::cout);
         if (work_megapix < 0)
         {
             img = full_img;
@@ -782,18 +780,15 @@ int main(int argc, char* argv[])
     //double compose_seam_aspect = 1;
     double compose_work_aspect = 1;
 
-  namedWindow("pre-conversion", WINDOW_NORMAL);
+  //namedWindow("pre-conversion", WINDOW_NORMAL);
   namedWindow("post-conversion", WINDOW_NORMAL);
     for (int img_idx = 0; img_idx < num_images; ++img_idx)
     {
         LOGLN("Compositing image #" << indices[img_idx]+1);
 
         // Read image and resize it if necessary
-        full_img = imread(samples::findFile(img_names[img_idx])/*, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR*/);
-        std::cout << "Image " << img_names[img_idx] << " (" << full_img.size()
-                  << ")\n depth: " << full_img.depth() << " chan: "
-                  << full_img.channels() << " type: " << full_img.type()
-                  << std::endl;
+        full_img = imread(samples::findFile(img_names[img_idx]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+        print_mat(full_img, img_names[img_idx], std::cout);
         if (!is_compose_scale_set)
         {
             if (compose_megapix > 0)
@@ -854,7 +849,7 @@ int main(int argc, char* argv[])
 
   /*imshow("pre-conversion", img_warped);
   print_mat(img_warped, "pre-conversion", std::cout);*/
-        img_warped.convertTo(img_warped_s, CV_16S);
+        img_warped.convertTo(img_warped_s, CV_16S, 1/255.0);
         img_warped.release();
         img.release();
         mask.release();
@@ -890,6 +885,9 @@ int main(int argc, char* argv[])
 
         // Blend the current image
         blender->feed(img_warped_s, mask_warped, corners[img_idx]);
+        auto tpath = std::filesystem::path(img_names[img_idx]).filename();
+        imwrite(tpath, img_warped_s);
+        std::cout << "Wrote " << tpath << std::endl;
 
         /*
         static bool crap = false;
@@ -899,6 +897,7 @@ int main(int argc, char* argv[])
             blender->blend(result, result_mask);
             imshow("post-convertsion", result);
             waitKey(0);
+            return EXIT_SUCCESS;
            }
            */
     }
