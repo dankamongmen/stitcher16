@@ -48,7 +48,7 @@ static void printUsage()
         "      Resolution for image registration step. The default is 0.6 Mpx.\n"
         "  --features (surf|orb|sift|akaze)\n"
         "      Type of features used for images matching.\n"
-        "      The default is surf if available, orb otherwise.\n"
+        "      The default is surf.\n"
         "  --matcher (homography|affine)\n"
         "      Matcher used for pairwise image matching.\n"
         "  --estimator (homography|affine)\n"
@@ -116,8 +116,10 @@ double compose_megapix = -1;
 float conf_thresh = 1.f;
 #ifdef HAVE_OPENCV_XFEATURES2D
 string features_type = "surf";
+float match_conf = 0.65f;
 #else
 string features_type = "orb";
+float match_conf = 0.3f;
 #endif
 string matcher_type = "affine";
 string estimator_type = "homographic";
@@ -132,7 +134,6 @@ int expos_comp_type = ExposureCompensator::GAIN_BLOCKS;
 int expos_comp_nr_feeds = 1;
 int expos_comp_nr_filtering = 2;
 int expos_comp_block_size = 32;
-float match_conf = 0.3f;
 string seam_find_type = "gc_color";
 int blend_type = Blender::MULTI_BAND;
 float blend_strength = 5;
