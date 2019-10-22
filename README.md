@@ -163,7 +163,7 @@ Images as read have depth()==2 (CV_U16), as expected.
 Panorama object has depth()==0 (CV_U8), undesirable.
 
 call sequence:
-* imgs <- Mat::imread() for each input
+* Mat::imread() for each input into imgs
 * Stitcher::create(SCANS)
 * Stitcher::stitch(imgs, cv::Mat pano)
 * Mat::imwrite(pano) to output
