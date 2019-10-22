@@ -41,9 +41,17 @@ terminate called after throwing an instance of 'cv::Exception'
   * Naive removal of assert() led to washed-out, unusable image
 * warp type: spherical is default.
   * plane generates garbage.
-  * affine generates garbage. but retest with --matcher affine!
+  * affine generates garbage (tested affine and homography both).
 
-* turning off compensation (--expos_comp no) seems to have no problem in 8bit mode
+* turning off compensation (--expos_comp no) with affine generates a slightly
+  different image in 8-bit mode, a bit blurrier than the compensated
+  homographic. uncompensated homographic generates a washed-out image.
+* ConvertTo(32S) instead of (16S):
+```
+terminate called after throwing an instance of 'cv::Exception'
+  what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/stitching/src/blenders.cpp:362: error: (-215:Assertion failed) img.type() == CV_16SC3 || img.type() == CV_8UC3
+```
+* removed assert
 
 ## notes (simple)
 
