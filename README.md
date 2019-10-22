@@ -40,11 +40,35 @@ TIFF Directory at offset 0x57e34f6 (92157174)
 [schwarzgerat](0) $ ls -l ~/pathware/stitcher16/16-bit\ Images/Image1.tiff out16.tiff
 -rw-r--r-- 1 dank dank 92186502 2019-09-23 19:55 /home/dank/pathware/stitcher16/16-bit Images/Image1.tiff
 -rw-r--r-- 1 dank dank 92186520 2019-10-22 00:22 out16.tiff
-[schwarzgerat](0) $
+[schwarzgerat](0) $ gdalcompare.py ~/pathware/stitcher16/16-bit\ Images/Image1.tiff out16.tiff
+Files differ at the binary level.
+Differences Found: 1
+[schwarzgerat](1) $
 ```
 
-* Verifies that we can convert `CV_16UC3` -> `CV_32SC3` -> `CV_16UC3` without
-    loss of precision (see `backto16.tiff`).
+* Verifies that we can convert `CV_16UC3` -> `CV_32SC3` -> `CV_16UC3`, but with
+    slight loss of precision:
+```
+[schwarzgerat](0) $ gdalcompare.py ~/pathware/stitcher16/16-bit\ Images/Image1.tiff backto16.tiff
+Files differ at the binary level.
+Band 1 checksum difference:
+  Golden: 18317
+  New:    9610
+  Pixels Differing: 19823376
+  Maximum Pixel Difference: 127.0
+Band 2 checksum difference:
+  Golden: 18317
+  New:    9610
+  Pixels Differing: 19823376
+  Maximum Pixel Difference: 127.0
+Band 3 checksum difference:
+  Golden: 18317
+  New:    9610
+  Pixels Differing: 19823376
+  Maximum Pixel Difference: 127.0
+Differences Found: 4
+[schwarzgerat](4) $
+```
 
 ## notes (`detailed16`)
 Defaults:
