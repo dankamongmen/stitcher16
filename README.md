@@ -5,7 +5,11 @@ on behalf of [pathware](https://www.pathware.com/).
 
 Developed by Nick Black (dankamongmen@gmail.com)
 
-## notes (tiff16)
+## Failure modes
+* All-white image: 16-bit unsigned was converted to CV_16S (as done in the
+    warp step of detailed16)
+
+## notes (`tiff16`)
 
 * Verifies 16-bit TIFF output:
 ```
@@ -39,13 +43,18 @@ TIFF Directory at offset 0x57e34f6 (92157174)
 [schwarzgerat](0) $
 ```
 
-## notes (detailed)
+* Verifies that we can convert `CV_16UC3` -> `CV_32SC3` -> `CV_16UC3` without
+    loss of precision (see `backto16.tiff`).
+
+## notes (`detailed16`)
 Defaults:
 * `blend`=`multiband`
 * `matcher`=`homography`
 * `estimator`=`homography`
 * `warp`=`spherical`
 * `expos_comp`=`gain_blocks`
+* `features`=`surf`
+* `seam`==`gc_color`
 
 * Using affine for estimator and matcher yielded a null result. Using affine
     for matching only yielded a positive result. Using affine for estimation
@@ -89,6 +98,7 @@ terminate called after throwing an instance of 'cv::Exception'
 * turning off compensation (--expos_comp no) with affine generates a slightly
   different image in 8-bit mode, a bit blurrier than the compensated
   homographic. uncompensated homographic generates a washed-out image.
+  --expos_comp channels didn't seem to affect output.
 ```
 terminate called after throwing an instance of 'cv::Exception'
   what():  OpenCV(4.1.2-dev) /home/dank/src/opencv/modules/stitching/src/blenders.cpp:362: error: (-215:Assertion failed) img.type() == CV_16SC3 || img.type() == CV_8UC3
@@ -123,7 +133,7 @@ Output [1279 x 919]
 * Changed feed() casts to use int from short
 
 
-## notes (simple)
+## notes (`simple`)
 
 Images as read have depth()==2 (CV_U16), as expected.
 Panorama object has depth()==0 (CV_U8), undesirable.
