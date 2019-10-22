@@ -3,12 +3,12 @@
 #include <fstream>
 #include <string>
 #include "opencv2/opencv_modules.hpp"
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/utility.hpp>
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/stitching/detail/autocalib.hpp"
 #include "opencv2/stitching/detail/blenders.hpp"
-#include "opencv2/stitching/detail/timelapsers.hpp"
 #include "opencv2/stitching/detail/camera.hpp"
 #include "opencv2/stitching/detail/exposure_compensate.hpp"
 #include "opencv2/stitching/detail/matchers.hpp"
@@ -29,6 +29,12 @@ using namespace std;
 using namespace cv;
 using namespace cv::detail;
 
+std::ostream& print_mat(const Mat& m, const string& s, std::ostream& os) {
+  os << "Image " << s << " (" << m.size() << ")\n depth: " <<
+     m.depth() << " chan: " << m.channels() << " type: " <<
+     m.type() << std::endl;
+  return os;
+}
 static void printUsage()
 {
     cout <<
@@ -99,8 +105,6 @@ static void printUsage()
         "      Blending strength from [0,100] range. The default is 5.\n"
         "  --output <result_img>\n"
         "      The default is 'result.jpg'.\n"
-        "  --timelapse (as_is|crop) \n"
-        "      Output warped images separately as frames of a time lapse movie, with 'fixed_' prepended to input file names.\n"
         "  --rangewidth <int>\n"
         "      uses range_width to limit number of images to match with.\n";
 }
@@ -135,10 +139,8 @@ int expos_comp_block_size = 32;
 float match_conf = 0.3f;
 string seam_find_type = "gc_color";
 int blend_type = Blender::MULTI_BAND;
-int timelapse_type = Timelapser::AS_IS;
 float blend_strength = 5;
 string result_name = "result.jpg";
-bool timelapse = false;
 int range_width = -1;
 
 
@@ -340,21 +342,6 @@ static int parseCmdArgs(int argc, char** argv)
             else
             {
                 cout << "Bad blending method\n";
-                return -1;
-            }
-            i++;
-        }
-        else if (string(argv[i]) == "--timelapse")
-        {
-            timelapse = true;
-
-            if (string(argv[i + 1]) == "as_is")
-                timelapse_type = Timelapser::AS_IS;
-            else if (string(argv[i + 1]) == "crop")
-                timelapse_type = Timelapser::CROP;
-            else
-            {
-                cout << "Bad timelapse method\n";
                 return -1;
             }
             i++;
@@ -797,16 +784,21 @@ int main(int argc, char* argv[])
     Mat img_warped, img_warped_s;
     Mat dilated_mask, seam_mask, mask, mask_warped;
     Ptr<Blender> blender;
-    Ptr<Timelapser> timelapser;
     //double compose_seam_aspect = 1;
     double compose_work_aspect = 1;
 
+  namedWindow("pre-conversion", WINDOW_NORMAL);
+  namedWindow("post-conversion", WINDOW_NORMAL);
     for (int img_idx = 0; img_idx < num_images; ++img_idx)
     {
         LOGLN("Compositing image #" << indices[img_idx]+1);
 
         // Read image and resize it if necessary
         full_img = imread(samples::findFile(img_names[img_idx]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+        std::cout << "Image " << img_names[img_idx] << " (" << full_img.size()
+                  << ")\n depth: " << full_img.depth() << " chan: "
+                  << full_img.channels() << " type: " << full_img.type()
+                  << std::endl;
         if (!is_compose_scale_set)
         {
             if (compose_megapix > 0)
@@ -865,7 +857,12 @@ int main(int argc, char* argv[])
         // Compensate exposure
         compensator->apply(img_idx, corners[img_idx], img_warped, mask_warped);
 
+  /*imshow("pre-conversion", img_warped);
+  print_mat(img_warped, "pre-conversion", std::cout);*/
         img_warped.convertTo(img_warped_s, CV_16S);
+  imshow("post-conversion", img_warped_s);
+  print_mat(img_warped_s, "post-conversion", std::cout);
+  waitKey(0);
         img_warped.release();
         img.release();
         mask.release();
@@ -874,7 +871,7 @@ int main(int argc, char* argv[])
         resize(dilated_mask, seam_mask, mask_warped.size(), 0, 0, INTER_LINEAR_EXACT);
         mask_warped = seam_mask & mask_warped;
 
-        if (!blender && !timelapse)
+        if (!blender)
         {
             blender = Blender::createDefault(blend_type, try_cuda);
             Size dst_sz = resultRoi(corners, sizes).size();
@@ -895,50 +892,24 @@ int main(int argc, char* argv[])
             }
             blender->prepare(corners, sizes);
         }
-        else if (!timelapser && timelapse)
-        {
-            timelapser = Timelapser::createDefault(timelapse_type);
-            timelapser->initialize(corners, sizes);
-        }
 
         std::cout << "\nOutput " << img_warped_s.size() << std::endl;
         std::cout << " depth: " << img_warped_s.depth() << " type: " << img_warped_s.type() << std::endl;
 
         // Blend the current image
-        if (timelapse)
-        {
-            timelapser->process(img_warped_s, Mat::ones(img_warped_s.size(), CV_8UC1), corners[img_idx]);
-            String fixedFileName;
-            size_t pos_s = String(img_names[img_idx]).find_last_of("/\\");
-            if (pos_s == String::npos)
-            {
-                fixedFileName = "fixed_" + img_names[img_idx];
-            }
-            else
-            {
-                fixedFileName = "fixed_" + String(img_names[img_idx]).substr(pos_s + 1, String(img_names[img_idx]).length() - pos_s);
-            }
-            imwrite(fixedFileName, timelapser->getDst());
-        }
-        else
-        {
-            blender->feed(img_warped_s, mask_warped, corners[img_idx]);
-        }
+        blender->feed(img_warped_s, mask_warped, corners[img_idx]);
     }
 
-    if (!timelapse)
-    {
-        Mat result, result_mask;
-        blender->blend(result, result_mask);
+    Mat result, result_mask;
+    blender->blend(result, result_mask);
 
-        LOGLN("Compositing, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
-        std::cout << "\nOutput " << result.size() << std::endl;
-        std::cout << " depth: " << result.depth() << " type: " << result.type() << std::endl;
+    LOGLN("Compositing, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
+    std::cout << "\nOutput " << result.size() << std::endl;
+    std::cout << " depth: " << result.depth() << " type: " << result.type() << std::endl;
 
-        if(!imwrite(result_name, result)){
-            std::cerr << "Couldn't write output to " << result_name << std::endl;
-            return EXIT_FAILURE;
-        }
+    if(!imwrite(result_name, result)){
+        std::cerr << "Couldn't write output to " << result_name << std::endl;
+        return EXIT_FAILURE;
     }
 
     LOGLN("Finished " << result_name << ", total time: " << ((getTickCount() - app_start_time) / getTickFrequency()) << " sec");

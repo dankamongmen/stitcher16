@@ -5,7 +5,7 @@ project(Stitcher16 VERSION 0.0.1
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(PkgConfig REQUIRED)
-find_package(OpenCV 4.1.2 REQUIRED COMPONENTS core imgcodecs stitching)
+find_package(OpenCV 4.1.2 REQUIRED COMPONENTS core imgcodecs stitching highgui)
 pkg_check_modules(TIFF REQUIRED libtiff-4)
 
 file(GLOB SBINSRCS CONFIGURE_DEPENDS src/simple.cpp)
