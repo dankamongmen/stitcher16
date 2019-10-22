@@ -40,10 +40,19 @@ TIFF Directory at offset 0x57e34f6 (92157174)
 ```
 
 ## notes (detailed)
+Defaults:
+* `blend`=`multiband`
+* `matcher`=`homography`
+* `estimator`=`homography`
+* `warp`=`spherical`
+* `expos_comp`=`gain_blocks`
+
 * Using affine for estimator and matcher yielded a null result. Using affine
     for matching only yielded a positive result. Using affine for estimation
-    alone yielded a null result. IMHO, the homographic output was slightly
+    alone yielded a null result. IMHO, the all-homography output was slightly
     better (less banding), at least for 8-bit output.
+* Using blend=no yielded an unacceptable result. Blend=feather was similarly
+    unaccpetable.
 * Must pass cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR to imread() to load
     images as 16-bit ones.
 ```

@@ -789,7 +789,7 @@ int main(int argc, char* argv[])
         LOGLN("Compositing image #" << indices[img_idx]+1);
 
         // Read image and resize it if necessary
-        full_img = imread(samples::findFile(img_names[img_idx]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+        full_img = imread(samples::findFile(img_names[img_idx])/*, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR*/);
         std::cout << "Image " << img_names[img_idx] << " (" << full_img.size()
                   << ")\n depth: " << full_img.depth() << " chan: "
                   << full_img.channels() << " type: " << full_img.type()
@@ -891,6 +891,7 @@ int main(int argc, char* argv[])
         // Blend the current image
         blender->feed(img_warped_s, mask_warped, corners[img_idx]);
 
+        /*
         static bool crap = false;
            if(crap == false){
             crap = true;
@@ -899,6 +900,7 @@ int main(int argc, char* argv[])
             imshow("post-convertsion", result);
             waitKey(0);
            }
+           */
     }
 
     Mat result, result_mask;
