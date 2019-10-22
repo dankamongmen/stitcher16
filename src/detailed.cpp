@@ -1,4 +1,5 @@
 // Adapted from opencv/samples/cpp/stitching_detailed.cpp 4.1.2
+#include "pathware.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -29,12 +30,6 @@ using namespace std;
 using namespace cv;
 using namespace cv::detail;
 
-std::ostream& print_mat(const Mat& m, const string& s, std::ostream& os) {
-  os << "Image " << s << " (" << m.size() << ")\n depth: " <<
-     m.depth() << " chan: " << m.channels() << " type: " <<
-     m.type() << std::endl;
-  return os;
-}
 static void printUsage()
 {
     cout <<

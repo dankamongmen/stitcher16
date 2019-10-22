@@ -5,6 +5,40 @@ on behalf of [pathware](https://www.pathware.com/).
 
 Developed by Nick Black (dankamongmen@gmail.com)
 
+## notes (tiff16)
+
+* Verifies 16-bit TIFF output:
+```
+[schwarzgerat](0) $ tiffinfo ~/pathware/stitcher16/16-bit\ Images/Image1.tiff
+TIFF Directory at offset 0x57e34f6 (92157174)
+  Image Width: 5472 Image Length: 3648
+  Bits/Sample: 16
+  Compression Scheme: LZW
+  Photometric Interpretation: RGB color
+  Samples/Pixel: 3
+  Rows/Strip: 1
+  Planar Configuration: single image plane
+  Predictor: horizontal differencing 2 (0x2)
+[schwarzgerat](0) $ ./tiff16 ~/pathware/stitcher16/16-bit\ Images/Image1.tiff
+Image /home/dank/pathware/stitcher16/16-bit Images/Image1.tiff ([5472 x 3648])
+ depth: 2 chan: 3 type: 18
+[schwarzgerat](0) $ tiffinfo out16.tiff
+TIFF Directory at offset 0x57e34f6 (92157174)
+  Image Width: 5472 Image Length: 3648
+  Bits/Sample: 16
+  Sample Format: unsigned integer
+  Compression Scheme: LZW
+  Photometric Interpretation: RGB color
+  Samples/Pixel: 3
+  Rows/Strip: 1
+  Planar Configuration: single image plane
+  Predictor: horizontal differencing 2 (0x2)
+[schwarzgerat](0) $ ls -l ~/pathware/stitcher16/16-bit\ Images/Image1.tiff out16.tiff
+-rw-r--r-- 1 dank dank 92186502 2019-09-23 19:55 /home/dank/pathware/stitcher16/16-bit Images/Image1.tiff
+-rw-r--r-- 1 dank dank 92186520 2019-10-22 00:22 out16.tiff
+[schwarzgerat](0) $
+```
+
 ## notes (detailed)
 * Using affine for estimator and matcher yielded a null result. Using affine
     for matching only yielded a positive result. Using affine for estimation

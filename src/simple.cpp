@@ -1,3 +1,4 @@
+#include "pathware.h"
 #include <iostream>
 #include <tiffio.h>
 #include <opencv2/imgcodecs.hpp>
@@ -27,9 +28,7 @@ int main(int argc, char** argv) {
       std::cerr << "Couldn't read image at " << *arg << std::endl;
       usage(argv[0], std::cerr, EXIT_FAILURE);
     }
-    std::cout << "Read " << *arg << " (" << img.size() << ")" << std::endl;
-    std::cout << " chans: " << img.channels() << " depth: " << img.depth()
-              << " type: " << img.type() << std::endl;
+    print_mat(img, *arg, std::cout);
     imgs.push_back(img);
   }
   cv::Mat pano;

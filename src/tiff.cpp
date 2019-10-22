@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include "pathware.h"
 #include <opencv2/imgcodecs.hpp>
 
 int main(int argc, char** argv) {
@@ -9,6 +10,7 @@ int main(int argc, char** argv) {
       std::cerr << "error reading " << *argv << std::endl;
       return EXIT_FAILURE;
     }
+    print_mat(img, *argv, std::cout);
     if(!imwrite("out16.tiff", img)){
       std::cerr << "error writing out16.tiff" << std::endl;
       return EXIT_FAILURE;
