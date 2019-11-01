@@ -37,9 +37,6 @@ static void printUsage()
         "Rotation model images stitcher.\n\n"
         "stitching_detailed img1 img2 [...imgN] [flags]\n\n"
         "Flags:\n"
-        "  --preview\n"
-        "      Run stitching in the preview mode. Works faster than usual mode,\n"
-        "      but output image will have lower resolution.\n"
         "  --try_cuda (yes|no)\n"
         "      Try to use CUDA. The default value is 'no'. All default values\n"
         "      are for CPU mode.\n"
@@ -57,7 +54,7 @@ static void printUsage()
         "      Confidence for feature matching step. The default is 0.3.\n"
         "  --conf_thresh <float>\n"
         "      Threshold for two images are from the same panorama confidence.\n"
-        "      The default is 1.0.\n"
+        "      The default is 1.\n"
         "  --ba (no|reproj|ray|affine)\n"
         "      Bundle adjustment cost function. The default is ray.\n"
         "  --ba_refine_mask (mask)\n"
@@ -108,7 +105,6 @@ static void printUsage()
 
 // Default command line args
 vector<String> img_names;
-bool preview = false;
 bool try_cuda = false;
 double work_megapix = 0.6;
 double seam_megapix = 0.1;
@@ -153,10 +149,6 @@ static int parseCmdArgs(int argc, char** argv)
         {
             printUsage();
             return -1;
-        }
-        else if (string(argv[i]) == "--preview")
-        {
-            preview = true;
         }
         else if (string(argv[i]) == "--try_cuda")
         {
@@ -360,10 +352,6 @@ static int parseCmdArgs(int argc, char** argv)
         else
             img_names.push_back(argv[i]);
     }
-    if (preview)
-    {
-        compose_megapix = 0.6;
-    }
     return 0;
 }
 
@@ -393,11 +381,13 @@ int main(int argc, char* argv[])
     double work_scale = 1, seam_scale = 1, compose_scale = 1;
     bool is_work_scale_set = false, is_seam_scale_set = false, is_compose_scale_set = false;
 
-    LOGLN("Finding features...");
+    LOGLN("Finding features using " << features_type << " at " <<
+          match_conf << "...");
 #if ENABLE_LOG
     int64 t = getTickCount();
 #endif
 
+    bool good_16_bit_features = false;
     Ptr<Feature2D> finder;
     if (features_type == "orb")
     {
@@ -411,15 +401,20 @@ int main(int argc, char* argv[])
     else if (features_type == "surf")
     {
         finder = xfeatures2d::SURF::create();
+        good_16_bit_features = true;
     }
     else if (features_type == "sift") {
         finder = xfeatures2d::SIFT::create();
+        good_16_bit_features = true;
     }
 #endif
     else
     {
-        cout << "Unknown 2D features type: '" << features_type << "'.\n";
+        cerr << "Unknown 2D features type: '" << features_type << "'.\n";
         return -1;
+    }
+    if(!good_16_bit_features){
+      LOGLN("Warning: surf/sift are strongly recommended for 16-bit stitching");
     }
 
     Mat full_img, img;
@@ -472,7 +467,8 @@ int main(int argc, char* argv[])
     full_img.release();
     img.release();
 
-    LOGLN("Finding features, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
+    LOGLN("Finding features (" << features_type << "), time: "
+          << ((getTickCount() - t) / getTickFrequency()) << " sec");
 
     LOG("Pairwise matching");
 #if ENABLE_LOG
