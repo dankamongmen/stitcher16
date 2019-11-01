@@ -8,13 +8,16 @@ find_package(PkgConfig REQUIRED)
 find_package(OpenCV 4.1.2 REQUIRED COMPONENTS core imgcodecs stitching highgui)
 pkg_check_modules(TIFF REQUIRED libtiff-4)
 
-file(GLOB SBINSRCS CONFIGURE_DEPENDS src/simple.cpp)
-add_executable(stitcher16 ${SBINSRCS})
-target_include_directories(stitcher16 PRIVATE ${OpenCV_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS})
-target_link_libraries(stitcher16 ${OpenCV_LIBS})
-target_compile_options(stitcher16 PRIVATE
-    -Wall -Wextra
-)
+#SET(CMAKE_EXE_LINKER_FLAGS "-static")
+
+# simple method ultimately proved insufficient for our needs
+#file(GLOB SBINSRCS CONFIGURE_DEPENDS src/simple.cpp)
+#add_executable(stitcher16 ${SBINSRCS})
+#target_include_directories(stitcher16 PRIVATE ${OpenCV_INCLUDE_DIRS} ${TIFF_INCLUDE_DIRS})
+#target_link_libraries(stitcher16 ${OpenCV_LIBS})
+#target_compile_options(stitcher16 PRIVATE
+#    -Wall -Wextra
+#)
 
 file(GLOB DBINSRCS CONFIGURE_DEPENDS src/detailed.cpp)
 add_executable(detailed16 ${DBINSRCS})
