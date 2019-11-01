@@ -349,6 +349,11 @@ static int parseCmdArgs(int argc, char** argv)
             result_name = argv[i + 1];
             i++;
         }
+        else if (strncmp(argv[i], "--", 2) == 0)
+        {
+          std::cerr << "you probably meant an option with '" << argv[i] << "', no?" << std::endl;
+          return -1;
+        }
         else
             img_names.push_back(argv[i]);
     }
@@ -425,7 +430,7 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < num_images; ++i)
     {
-        full_img = imread(samples::findFile(img_names[i]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+        full_img = imread(samples::findFile(img_names[i])/*, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR*/);
         full_img_sizes[i] = full_img.size();
 
         if (full_img.empty())
@@ -504,7 +509,7 @@ int main(int argc, char* argv[])
     if (indices.size() != images.size())
     {
 std::cerr << "Lost some images! Wanted " << images.size() << " got " << indices.size() << std::endl;
-// return EXIT_FAILURE;
+return EXIT_FAILURE;
     }
     for (size_t i = 0; i < indices.size(); ++i)
     {
