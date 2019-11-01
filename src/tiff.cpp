@@ -5,6 +5,10 @@
 #include <opencv2/imgcodecs.hpp>
 
 int main(int argc, char** argv) {
+  if(argc < 2){
+    std::cerr << "usage: tiff16 image [images...]" << std::endl;
+    return EXIT_FAILURE;
+  }
   while(*++argv){
     auto img = cv::imread(*argv, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
     if(img.empty()){
