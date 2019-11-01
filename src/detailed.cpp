@@ -37,9 +37,6 @@ static void printUsage()
         "Rotation model images stitcher.\n\n"
         "stitching_detailed img1 img2 [...imgN] [flags]\n\n"
         "Flags:\n"
-        "  --preview\n"
-        "      Run stitching in the preview mode. Works faster than usual mode,\n"
-        "      but output image will have lower resolution.\n"
         "  --try_cuda (yes|no)\n"
         "      Try to use CUDA. The default value is 'no'. All default values\n"
         "      are for CPU mode.\n"
@@ -108,7 +105,6 @@ static void printUsage()
 
 // Default command line args
 vector<String> img_names;
-bool preview = false;
 bool try_cuda = false;
 double work_megapix = 0.6;
 double seam_megapix = 0.1;
@@ -154,10 +150,6 @@ static int parseCmdArgs(int argc, char** argv)
         {
             printUsage();
             return -1;
-        }
-        else if (string(argv[i]) == "--preview")
-        {
-            preview = true;
         }
         else if (string(argv[i]) == "--try_cuda")
         {
@@ -360,10 +352,6 @@ static int parseCmdArgs(int argc, char** argv)
         }
         else
             img_names.push_back(argv[i]);
-    }
-    if (preview)
-    {
-        compose_megapix = 0.6;
     }
     return 0;
 }
