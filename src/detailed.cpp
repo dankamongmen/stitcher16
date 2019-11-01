@@ -54,7 +54,7 @@ static void printUsage()
         "      Confidence for feature matching step. The default is 0.65 for surf and 0.3 for orb.\n"
         "  --conf_thresh <float>\n"
         "      Threshold for two images are from the same panorama confidence.\n"
-        "      The default is 1.0.\n"
+        "      The default is 1.\n"
         "  --ba (no|reproj|ray|affine)\n"
         "      Bundle adjustment cost function. The default is ray.\n"
         "  --ba_refine_mask (mask)\n"
@@ -382,11 +382,13 @@ int main(int argc, char* argv[])
     double work_scale = 1, seam_scale = 1, compose_scale = 1;
     bool is_work_scale_set = false, is_seam_scale_set = false, is_compose_scale_set = false;
 
-    LOGLN("Finding features...");
+    LOGLN("Finding features using " << features_type << " at " <<
+          match_conf << "...");
 #if ENABLE_LOG
     int64 t = getTickCount();
 #endif
 
+    bool good_16_bit_features = false;
     Ptr<Feature2D> finder;
     if (features_type == "orb")
     {
@@ -400,15 +402,20 @@ int main(int argc, char* argv[])
     else if (features_type == "surf")
     {
         finder = xfeatures2d::SURF::create();
+        good_16_bit_features = true;
     }
     else if (features_type == "sift") {
         finder = xfeatures2d::SIFT::create();
+        good_16_bit_features = true;
     }
 #endif
     else
     {
-        cout << "Unknown 2D features type: '" << features_type << "'.\n";
+        cerr << "Unknown 2D features type: '" << features_type << "'.\n";
         return -1;
+    }
+    if(!good_16_bit_features){
+      LOGLN("Warning: surf/sift are strongly recommended for 16-bit stitching");
     }
 
     Mat full_img, img;
@@ -461,7 +468,8 @@ int main(int argc, char* argv[])
     full_img.release();
     img.release();
 
-    LOGLN("Finding features, time: " << ((getTickCount() - t) / getTickFrequency()) << " sec");
+    LOGLN("Finding features (" << features_type << "), time: "
+          << ((getTickCount() - t) / getTickFrequency()) << " sec");
 
     LOG("Pairwise matching");
 #if ENABLE_LOG
