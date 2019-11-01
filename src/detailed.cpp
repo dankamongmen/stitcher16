@@ -54,7 +54,7 @@ static void printUsage()
         "  --estimator (homography|affine)\n"
         "      Type of estimator used for transformation estimation.\n"
         "  --match_conf <float>\n"
-        "      Confidence for feature matching step. The default is 0.65 for surf and 0.3 for orb.\n"
+        "      Confidence for feature matching step. The default is 0.3.\n"
         "  --conf_thresh <float>\n"
         "      Threshold for two images are from the same panorama confidence.\n"
         "      The default is 1.0.\n"
@@ -116,13 +116,12 @@ double compose_megapix = -1;
 float conf_thresh = 1.f;
 #ifdef HAVE_OPENCV_XFEATURES2D
 string features_type = "surf";
-float match_conf = 0.65f;
 #else
 string features_type = "orb";
-float match_conf = 0.3f;
 #endif
+float match_conf = 0.3f;
 string matcher_type = "affine";
-string estimator_type = "homographic";
+string estimator_type = "homography";
 string ba_cost_func = "ray";
 string ba_refine_mask = "xxxxx";
 bool do_wave_correct = true;
@@ -431,7 +430,7 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < num_images; ++i)
     {
-        full_img = imread(samples::findFile(img_names[i])/*, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR*/);
+        full_img = imread(samples::findFile(img_names[i]), cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
         full_img_sizes[i] = full_img.size();
 
         if (full_img.empty())
@@ -506,6 +505,11 @@ int main(int argc, char* argv[])
     vector<Mat> img_subset;
     vector<String> img_names_subset;
     vector<Size> full_img_sizes_subset;
+    if (indices.size() != images.size())
+    {
+std::cerr << "Lost some images! Wanted " << images.size() << " got " << indices.size() << std::endl;
+// return EXIT_FAILURE;
+    }
     for (size_t i = 0; i < indices.size(); ++i)
     {
         img_names_subset.push_back(img_names[indices[i]]);
