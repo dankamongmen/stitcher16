@@ -5,6 +5,16 @@ on behalf of [pathware](https://www.pathware.com/).
 
 Developed by Nick Black (dankamongmen@gmail.com)
 
+## Best mode
+
+The most reliable methodology I could find for stitching together 15x
+rows of 16-bit medical TIFFs was:
+ * features: sift (in 8-bit mode is fine)
+ * conf_thresh: 1.0
+ * match_conf: 0.3
+ * matcher: homography
+ * estimator: homography
+
 ## Failure modes
 * All-white image: 16-bit unsigned was converted to CV_16S (as done in the
     warp step of detailed16)
